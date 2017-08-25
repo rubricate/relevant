@@ -1,7 +1,7 @@
-#RubricatePHP  MVC
+#RubricatePHP  Application Kernel
 
 ```
-$ composer require rubricate/mvc
+$ composer require rubricate/kernel
 ```
 
 ## Structure suggestion

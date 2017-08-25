@@ -9,10 +9,10 @@
  */
 
 
-namespace Rubricate\Mvc;
+namespace Rubricate\Kernel;
 
 
-interface IAppMvc
+interface IApplicationKernel
 {
     public function run();
 }

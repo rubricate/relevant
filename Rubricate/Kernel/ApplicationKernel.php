@@ -9,14 +9,14 @@
  */
 
 
-namespace Rubricate\Mvc;
+namespace Rubricate\Kernel;
 
 
 use Rubricate\Uri\Uri;
 use Rubricate\Uri\ControllerToNamespacesUri;
 
 
-class AppMvc implements IAppMvc{
+class ApplicationKernel implements IApplicationKernel{
 
     private $controller;
     private $action;
