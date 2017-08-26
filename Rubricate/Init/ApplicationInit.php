@@ -9,14 +9,14 @@
  */
 
 
-namespace Rubricate\Kernel;
+namespace Rubricate\Init;
 
 
 use Rubricate\Uri\Uri;
 use Rubricate\Uri\ControllerToNamespacesUri;
 
 
-class ApplicationKernel implements IApplicationKernel{
+class ApplicationInit implements IApplicationInit{
 
     private $controller;
     private $action;
@@ -24,7 +24,7 @@ class ApplicationKernel implements IApplicationKernel{
     private $controllerNamespace;
 
 
-    public function __construct(IControllerNamespaceKernel $c) 
+    public function __construct(IControllerNamespaceInit $c) 
     {
         $u = Uri::getInstance();
         $n = new ControllerToNamespacesUri($u);

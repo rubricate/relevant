@@ -1,5 +1,5 @@
 {
-    "name": "rubricate/kernel",
+    "name": "rubricate/init",
     "license": "MIT",
 
     "authors": [
@@ -15,7 +15,7 @@
     },
     "autoload":{
         "psr-4": {
-            "Rubricate\\Kernel\\": "Rubricate/Kernel/"
+            "Rubricate\\Init\\": "Rubricate/Init/"
         }
     }
 }

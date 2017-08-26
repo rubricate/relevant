@@ -1,7 +1,7 @@
-#RubricatePHP  Application Kernel
+# RubricatePHP  Application Init
 
 ```
-$ composer require rubricate/kernel
+$ composer require rubricate/init
 ```
 
 ## Structure suggestion
