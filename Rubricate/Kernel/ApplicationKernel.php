@@ -20,20 +20,20 @@ class ApplicationKernel implements IApplicationKernel{
 
     private $controller;
     private $action;
-    private $namespace;
-    private $uri;
+    private $param;
+    private $controllerNamespace;
 
 
-    public function __construct($namespaceController) 
+    public function __construct(IControllerNamespaceKernel $c) 
     {
-        self::setNamespace($namespaceController);
+        $u = Uri::getInstance();
+        $n = new ControllerToNamespacesUri($u);
 
-        $uri       = Uri::getInstance();
-        $namespace = new ControllerToNamespacesUri($uri);
+        $this->controller = $n->getController();
+        $this->action     = $u->getAction();
+        $this->param      = $u->getParamArr();
 
-        $this->controller = $namespace->getController();
-        $this->action     = $uri->getAction();
-        $this->uri        = $uri;
+        $this->controllerNamespace = $c;
     }
 
 
@@ -42,8 +42,9 @@ class ApplicationKernel implements IApplicationKernel{
 
     public function run() 
     {
-
-        $this->controller = self::getNamespace($this->controller);
+        $this->controller = ''
+            . $this->controllerNamespace->get() 
+            . $this->controller;
 
 
         if ( !self::hasController() || self::hasNotAction() )
@@ -51,13 +52,10 @@ class ApplicationKernel implements IApplicationKernel{
             $this->controllerError404();
         }
 
-        $controller = new $this->controller();
+        $controller       = new $this->controller();
+        $controllerAction = array($controller, $this->action);
 
-        call_user_func_array(
-            array($controller, $this->action), 
-            $this->uri->getParamArr() 
-        );
-
+        call_user_func_array($controllerAction, $this->param);
     }
 
 
@@ -69,7 +67,9 @@ class ApplicationKernel implements IApplicationKernel{
     private function controllerError404() 
     {
 
-        $this->controller = self::getNamespace('Error404');
+        $this->controller = ''
+            . $this->controllerNamespace->get() 
+            . 'Error404';
 
         if (!self::hasController()) 
         {
@@ -81,28 +81,6 @@ class ApplicationKernel implements IApplicationKernel{
         exit();
     }
 
-
-
-
-
-
-
-    private function getNamespace($controller)
-    {
-        return $this->namespace . $controller;
-    }
-
-
-
-
-
-
-    private function setNamespace($namespace)
-    {
-        $namespace = str_replace('.', '\\', $namespace);
-        $this->namespace = rtrim($namespace, '\\') . '\\' ;
-        return $this;
-    }
 
 
 
