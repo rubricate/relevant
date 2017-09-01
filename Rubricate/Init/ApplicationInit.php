@@ -1,7 +1,7 @@
 <?php
 
 /*
- * @package     RubriccatePHP
+ * @package     RubricatePHP
  * @author      Estefanio NS <estefanions AT gmail DOT com>
  * @link        http://rubricate.github.io
  * @copyright   2010 - 2017 
