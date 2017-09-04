@@ -22,6 +22,10 @@ class ApplicationInit implements IApplicationInit{
     private $action;
     private $param;
     private $controllerNamespace;
+    private $controllerSuffix;
+    private $actionSuffix;
+
+
 
 
     public function __construct(IControllerNamespaceInit $c) 
@@ -40,11 +44,42 @@ class ApplicationInit implements IApplicationInit{
 
 
 
+    public function setControllerSuffix($controllerSuffix)
+    {
+        $this->controllerSuffix = $controllerSuffix;
+
+        return $this;
+    } 
+
+
+
+
+
+    public function setActionSuffix($actionSuffix)
+    {
+        $this->actionSuffix = $actionSuffix;
+
+        return $this;
+    } 
+
+
+
+
+
     public function run() 
     {
         $this->controller = ''
             . $this->controllerNamespace->get() 
-            . $this->controller;
+            . $this->controller
+            . $this->controllerSuffix
+            . '' ;
+
+
+        $this->action = ''
+            . $this->action 
+            . $this->actionSuffix
+            . '';
+
 
 
         if ( !self::hasController() || self::hasNotAction() )
@@ -52,7 +87,8 @@ class ApplicationInit implements IApplicationInit{
             $this->controllerError404();
         }
 
-        $controller       = new $this->controller();
+        $controller = new $this->controller();
+
         $controllerAction = array($controller, $this->action);
 
         call_user_func_array($controllerAction, $this->param);
@@ -69,15 +105,18 @@ class ApplicationInit implements IApplicationInit{
 
         $this->controller = ''
             . $this->controllerNamespace->get() 
-            . 'Error404';
+            . 'Error404'
+            . $this->controllerSuffix
+            . '' ;
 
         if (!self::hasController()) 
         {
             exit('Page Not found');
         }
 
+
         $this->controller = new $this->controller();
-        $this->controller->index();
+        $this->controller->{$this->action}();
         exit();
     }
 
