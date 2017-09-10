@@ -116,7 +116,7 @@ class ApplicationInit implements IApplicationInit{
 
 
         $this->controller = new $this->controller();
-        $this->controller->{$this->action}();
+        $this->controller->{"index" . $this->actionSuffix}();
         exit();
     }
 
