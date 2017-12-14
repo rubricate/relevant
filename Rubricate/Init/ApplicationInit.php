@@ -23,6 +23,7 @@ class ApplicationInit implements IApplicationInit{
     private $param;
     private $controllerNamespace;
     private $controllerSuffix;
+    private $namespaceInController = array();
     private $actionSuffix;
 
 
@@ -65,12 +66,39 @@ class ApplicationInit implements IApplicationInit{
 
 
 
+    
+    public function addNamespaceInController($ns)
+    {
+        if(is_array($ns)){
+
+            foreach ($ns as $value){
+                self::addNamespaceInController($value);
+            }
+
+            return $this;
+        }
+
+        $this->namespaceInController[] = $ns;
+
+        return $this;
+    } 
+
+
+
+
 
     public function run() 
     {
+        $controller = (self::isNamespaceInController())? ''
+            . $this->controller 
+            . self::getNamespaceInController(): ''
+            . $this->controller 
+            . '';
+
+
         $this->controller = ''
             . $this->controllerNamespace->get() 
-            . $this->controller
+            . $controller
             . $this->controllerSuffix
             . '' ;
 
@@ -81,20 +109,15 @@ class ApplicationInit implements IApplicationInit{
             . '';
 
 
-
-        if ( !self::hasController() || self::hasNotAction() )
-        {
+        if ( !self::hasController() || self::hasNotAction() ){
             $this->controllerError404();
         }
 
-        $controller = new $this->controller();
-
+        $controller       = new $this->controller();
         $controllerAction = array($controller, $this->action);
 
         call_user_func_array($controllerAction, $this->param);
     }
-
-
 
 
 
@@ -109,8 +132,8 @@ class ApplicationInit implements IApplicationInit{
             . $this->controllerSuffix
             . '' ;
 
-        if (!self::hasController()) 
-        {
+
+        if (!self::hasController()){
             exit('Page Not found');
         }
 
@@ -119,8 +142,6 @@ class ApplicationInit implements IApplicationInit{
         $this->controller->{"index" . $this->actionSuffix}();
         exit();
     }
-
-
 
 
 
@@ -142,6 +163,32 @@ class ApplicationInit implements IApplicationInit{
             !method_exists($this->controller, '__call')
         );
     } 
+
+
+
+
+
+    private function isNamespaceInController()
+    {
+        $e = explode('\\', $this->controller);
+        $i = (count($e) > 1);
+        $a = (in_array(ucfirst($e[0]), $e));
+
+        return ($i && $a);
+    } 
+
+
+
+
+
+    private function getNamespaceInController()
+    {
+       $e = explode('\\', $this->controller);
+
+       return ucfirst($e[0]);
+    } 
+
+
 
 
 
