@@ -8,15 +8,14 @@
  * 
  */
 
-
 namespace Rubricate\Init;
-
 
 use Rubricate\Uri\Uri;
 use Rubricate\Uri\ControllerToNamespacesUri;
 
 
-class ApplicationInit implements IApplicationInit{
+class ApplicationInit implements IApplicationInit
+{
 
     private $controller;
     private $action;
@@ -44,14 +43,12 @@ class ApplicationInit implements IApplicationInit{
 
 
 
-
     public function setControllerSuffix($controllerSuffix)
     {
         $this->controllerSuffix = $controllerSuffix;
 
         return $this;
     } 
-
 
 
 
@@ -66,19 +63,18 @@ class ApplicationInit implements IApplicationInit{
 
 
 
-    
-    public function addNamespaceInController($ns)
+    public function addNamespaceInController($name)
     {
-        if(is_array($ns)){
+        if(is_array($name)){
 
-            foreach ($ns as $value){
+            foreach ($name as $value){
                 self::addNamespaceInController($value);
             }
 
             return $this;
         }
 
-        $this->namespaceInController[] = $ns;
+        $this->namespaceInController[] = $name;
 
         return $this;
     } 
@@ -86,31 +82,13 @@ class ApplicationInit implements IApplicationInit{
 
 
 
-
     public function run() 
     {
-        $controller = (self::isNamespaceInController())? ''
-            . $this->controller 
-            . self::getNamespaceInController(): ''
-            . $this->controller 
-            . '';
+        $this->controller = self::getController($this->controller);
+        $this->action     = self::getAction($this->action);
 
-
-        $this->controller = ''
-            . $this->controllerNamespace->get() 
-            . $controller
-            . $this->controllerSuffix
-            . '' ;
-
-
-        $this->action = ''
-            . $this->action 
-            . $this->actionSuffix
-            . '';
-
-
-        if ( !self::hasController() || self::hasNotAction() ){
-            $this->controllerError404();
+        if ( !self::isController() || self::isNotAction() ){
+            self::controllerError404();
         }
 
         $controller       = new $this->controller();
@@ -122,32 +100,25 @@ class ApplicationInit implements IApplicationInit{
 
 
 
-
     private function controllerError404() 
     {
+        $this->controller = self::getController('Error404');
 
-        $this->controller = ''
-            . $this->controllerNamespace->get() 
-            . 'Error404'
-            . $this->controllerSuffix
-            . '' ;
-
-
-        if (!self::hasController()){
+        if (!self::isController()){
             exit('Page Not found');
         }
 
 
-        $this->controller = new $this->controller();
-        $this->controller->{"index" . $this->actionSuffix}();
-        exit();
+        $controller = new $this->controller();
+        $controller->{self::getAction('index')}();
+
+        return;
     }
 
 
 
 
-
-    private function hasController()
+    private function isController()
     {
         return class_exists($this->controller);
     } 
@@ -155,8 +126,7 @@ class ApplicationInit implements IApplicationInit{
 
 
 
-
-    private function hasNotAction()
+    private function isNotAction()
     {
         return  ( 
             !method_exists($this->controller, $this->action) && 
@@ -167,27 +137,55 @@ class ApplicationInit implements IApplicationInit{
 
 
 
-
     private function isNamespaceInController()
     {
-        $e = explode('\\', $this->controller);
-        $i = (count($e) > 1);
-        $a = (in_array(ucfirst($e[0]), $e));
+        $explode = self::getExplodeController();
+        $isCount = (count($explode) > 1);
+        $isValid = (in_array(self::getNamespaceInController(), $explode));
 
-        return ($i && $a);
+        return ($isCount && $isValid);
     } 
-
 
 
 
 
     private function getNamespaceInController()
     {
-       $e = explode('\\', $this->controller);
-
-       return ucfirst($e[0]);
+        return ucfirst(self::getExplodeController(0));
     } 
 
+
+
+
+    private function getExplodeController($key = NULL)
+    {
+        $e = explode('\\', $this->controller);
+        $k = (!array_key_exists($key, $e))? array(): $e[$key];
+
+        return (!is_null($key) && is_int($key))? $k: $e;
+    } 
+
+
+
+
+    private function getController($controller)
+    {
+        $is         = self::isNamespaceInController();
+        $namespace  = $this->controllerNamespace->get();
+        $subSuffix  = self::getNamespaceInController();
+        $suffix     = $this->controllerSuffix;
+        $controller = ($is)? $controller . $subSuffix: $controller;
+
+        return $namespace . $controller . $suffix;
+    } 
+
+
+
+
+    private function getAction($action)
+    {
+        return $action . $this->actionSuffix;
+    } 
 
 
 
