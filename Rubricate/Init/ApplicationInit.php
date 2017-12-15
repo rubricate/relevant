@@ -17,27 +17,16 @@ use Rubricate\Uri\ControllerToNamespacesUri;
 class ApplicationInit implements IApplicationInit
 {
 
-    private $controller;
-    private $action;
-    private $param;
-    private $controllerNamespace;
-    private $controllerSuffix;
-    private $namespaceInController = array();
-    private $actionSuffix;
 
-
-
-
-    public function __construct(IControllerNamespaceInit $c) 
+    public function __construct(IControllerNamespaceInit $namespace) 
     {
         $u = Uri::getInstance();
         $n = new ControllerToNamespacesUri($u);
 
-        $this->controller = $n->getController();
-        $this->action     = $u->getAction();
-        $this->param      = $u->getParamArr();
-
-        $this->controllerNamespace = $c;
+        $this->vObject = new VObjectInit(
+            $namespace->get(), $n->getController(),
+            $u->getAction(),   $u->getParamArr()
+        );
     }
 
 
@@ -45,7 +34,7 @@ class ApplicationInit implements IApplicationInit
 
     public function setControllerSuffix($controllerSuffix)
     {
-        $this->controllerSuffix = $controllerSuffix;
+        $this->vObject->setControllerSuffix($controllerSuffix);
 
         return $this;
     } 
@@ -55,7 +44,7 @@ class ApplicationInit implements IApplicationInit
 
     public function setActionSuffix($actionSuffix)
     {
-        $this->actionSuffix = $actionSuffix;
+        $this->vObject->setActionSuffix($actionSuffix);
 
         return $this;
     } 
@@ -65,16 +54,7 @@ class ApplicationInit implements IApplicationInit
 
     public function addNamespaceInController($name)
     {
-        if(is_array($name)){
-
-            foreach ($name as $value){
-                self::addNamespaceInController($value);
-            }
-
-            return $this;
-        }
-
-        $this->namespaceInController[] = $name;
+        $this->vObject->addNamespaceInController($name);
 
         return $this;
     } 
@@ -84,17 +64,21 @@ class ApplicationInit implements IApplicationInit
 
     public function run() 
     {
-        $this->controller = self::getController($this->controller);
-        $this->action     = self::getAction($this->action);
+        $controller = $this->vObject->getController();
+        $action     = $this->vObject->getAction();
+        $param      = $this->vObject->getParam();
 
-        if ( !self::isController() || self::isNotAction() ){
+        if ( 
+            !class_exists($controller) || 
+            $this->vObject->isAction() 
+        ){
             self::controllerError404();
         }
 
-        $controller       = new $this->controller();
-        $controllerAction = array($controller, $this->action);
+        $initController       = new $controller();
+        $initControllerAction = array($initController, $action);
 
-        call_user_func_array($controllerAction, $this->param);
+        call_user_func_array($initControllerAction, $param);
     }
 
 
@@ -102,90 +86,18 @@ class ApplicationInit implements IApplicationInit
 
     private function controllerError404() 
     {
-        $this->controller = self::getController('Error404');
+        $controller = $this->vObject->getController('Error404');
 
-        if (!self::isController()){
+        if (!class_exists($controller)){
             exit('Page Not found');
         }
 
+        $error404 = new $controller();
+        $error404->{$this->vObject->getAction('index')}();
 
-        $controller = new $this->controller();
-        $controller->{self::getAction('index')}();
+        exit();
 
-        return;
     }
-
-
-
-
-    private function isController()
-    {
-        return class_exists($this->controller);
-    } 
-
-
-
-
-    private function isNotAction()
-    {
-        return  ( 
-            !method_exists($this->controller, $this->action) && 
-            !method_exists($this->controller, '__call')
-        );
-    } 
-
-
-
-
-    private function isNamespaceInController()
-    {
-        $explode = self::getExplodeController();
-        $isCount = (count($explode) > 1);
-        $isValid = (in_array(self::getNamespaceInController(), $explode));
-
-        return ($isCount && $isValid);
-    } 
-
-
-
-
-    private function getNamespaceInController()
-    {
-        return ucfirst(self::getExplodeController(0));
-    } 
-
-
-
-
-    private function getExplodeController($key = NULL)
-    {
-        $e = explode('\\', $this->controller);
-        $k = (!array_key_exists($key, $e))? array(): $e[$key];
-
-        return (!is_null($key) && is_int($key))? $k: $e;
-    } 
-
-
-
-
-    private function getController($controller)
-    {
-        $is         = self::isNamespaceInController();
-        $namespace  = $this->controllerNamespace->get();
-        $subSuffix  = self::getNamespaceInController();
-        $suffix     = $this->controllerSuffix;
-        $controller = ($is)? $controller . $subSuffix: $controller;
-
-        return $namespace . $controller . $suffix;
-    } 
-
-
-
-
-    private function getAction($action)
-    {
-        return $action . $this->actionSuffix;
-    } 
 
 
 
