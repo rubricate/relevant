@@ -64,14 +64,12 @@ class ApplicationInit implements IApplicationInit
 
     public function run() 
     {
-        $controller = $this->vObject->getController();
-        $action     = $this->vObject->getAction();
-        $param      = $this->vObject->getParam();
+        $controller   = $this->vObject->getController();
+        $action       = $this->vObject->getAction();
+        $param        = $this->vObject->getParam();
+        $isController = class_exists($controller);
 
-        if ( 
-            !class_exists($controller) || 
-            $this->vObject->isAction() 
-        ){
+        if (!$isController || $this->vObject->isAction()) {
             self::controllerError404();
         }
 
@@ -88,7 +86,7 @@ class ApplicationInit implements IApplicationInit
     {
         $controller = $this->vObject->getController('Error404');
 
-        if (!class_exists($controller)){
+        if (!class_exists($controller)) {
             exit('Page Not found');
         }
 

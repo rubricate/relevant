@@ -27,8 +27,7 @@ class VObjectInit
         $controllerName,
         $actionName,
         $param
-    )
-    {
+    ) {
         $this->namespace    = $namespace;
         $this->controller   = $controllerName;
         $this->action       = $actionName;
@@ -37,7 +36,7 @@ class VObjectInit
 
 
 
-    public function getController($name = NULL)
+    public function getController($name = null)
     {
         $this->controller = (!is_null($name))
             ? $name: $this->controller;
@@ -60,7 +59,7 @@ class VObjectInit
 
 
 
-    public function getAction($name = NULL)
+    public function getAction($name = null)
     {
         $this->action = (!is_null($name))
             ? $name: $this->action;
@@ -99,7 +98,7 @@ class VObjectInit
 
     public function addNamespaceInController($name)
     {
-        if(is_array($name)){
+        if(is_array($name)) {
 
             foreach ($name as $value){
                 self::addNamespaceInController($value);
@@ -136,7 +135,7 @@ class VObjectInit
 
         return (
             (count($explode) > 1) && 
-            (in_array (ucfirst($explode[0]), $explode))
+            (in_array(ucfirst($explode[0]), $explode))
         );
 
     } 
