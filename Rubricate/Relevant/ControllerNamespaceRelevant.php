@@ -9,9 +9,9 @@
  */
 
 
-namespace Rubricate\Init;
+namespace Rubricate\Relevant;
 
-class ControllerNamespaceInit implements IControllerNamespaceInit
+class ControllerNamespaceRelevant implements IControllerNamespaceRelevant
 {
     private $controllerNamespace;
 

@@ -4,17 +4,16 @@
  * @package     RubricatePHP
  * @author      Estefanio NS <estefanions AT gmail DOT com>
  * @link        http://rubricate.github.io
- * @copyright   2017 
+ * @copyright   2018 
  * 
  */
 
 
-namespace Rubricate\Init;
+namespace Rubricate\Relevant;
 
 
-interface IApplicationInit
+interface ISetControllerSuffixRelevant
 {
-    public function run();
+    public function setControllerSuffix($suffix);
 }
-
 

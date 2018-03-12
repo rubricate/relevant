@@ -9,10 +9,10 @@
  */
 
 
-namespace Rubricate\Init;
+namespace Rubricate\Relevant;
 
 
-interface IControllerNamespaceInit
+interface IControllerNamespaceRelevant
 {
     public function get();
 }

@@ -1,5 +1,5 @@
 {
-    "name": "rubricate/init",
+    "name": "rubricate/relevant",
     "license": "MIT",
 
     "authors": [
@@ -11,11 +11,11 @@
 
     "require": {
         "php": ">=5.3.0",
-        "rubricate/uri": "^0.1"
+        "rubricate/uri": "^0.3"
     },
     "autoload":{
         "psr-4": {
-            "Rubricate\\Init\\": "Rubricate/Init/"
+            "Rubricate\\Relevant\\": "Rubricate/Relevant/"
         }
     }
 }

@@ -1,7 +1,7 @@
-# RubricatePHP  Application Init
+# RubricatePHP  Application Relevant
 
 ```
-$ composer require rubricate/init
+$ composer require rubricate/Relevant
 ```
 
 ## Structure suggestion
