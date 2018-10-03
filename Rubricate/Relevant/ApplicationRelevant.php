@@ -32,9 +32,9 @@ class ApplicationRelevant extends AbstractApplicationRelevant
         $controller   = parent::getController();
         $action       = parent::getAction();
         $param        = parent::getParam();
-        $isController = class_exists($controller);
 
-        if (!$isController || parent::isAction()) {
+
+        if (!parent::isHttpCode200()) {
             self::controllerError404();
         }
 

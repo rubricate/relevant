@@ -122,15 +122,19 @@ abstract class AbstractApplicationRelevant implements
 
 
 
-    protected function isAction()
+    protected function isHttpCode200()
     {
-        $c = self::getcontroller();
+        $c = self::getController();
         $a = self::getAction();
 
         $isAction = method_exists($c, $a);
         $isCall   = method_exists($c, '__call');
 
-        return ($isAction && $isCall);
+        if( !class_exists( self::getController() ) ) {
+            return false;
+        }
+
+        return ($isAction || $isCall);
     } 
 
 
