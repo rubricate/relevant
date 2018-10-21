@@ -23,7 +23,8 @@ abstract class AbstractApplicationRelevant implements
     private $uri;
     private $controllerSuffix;
     private $actionSuffix;
-    private $namespaceInController = array();
+    private $namespaceInController       = array();
+    private $enableDirSubSufixController = false;
 
 
 
@@ -60,6 +61,15 @@ abstract class AbstractApplicationRelevant implements
 
 
 
+    public function enableDirSubSufixController()
+    {
+        $this->enableDirSubSufixController = true;
+
+        return $this;
+    } 
+
+
+
     public function addNamespaceInController($name)
     {
         if(is_array($name)) {
@@ -84,19 +94,26 @@ abstract class AbstractApplicationRelevant implements
         $controller = (!is_null($name))
             ? $name: $this->uri->getNamespaceAndController();
 
-        $explode   = self::explodeController();
-        $subSuffix = ucfirst($explode[0]);
+        $subDir = '';
 
+        if($this->enableDirSubSufixController){
 
-        $controller = (self::isNamespaceInController())
-            ? $controller . $subSuffix
-            : $controller;
+            $dirArr = explode('\\', $controller);
+
+            if(count($dirArr) > 1){
+
+                array_pop($dirArr);
+                $subDir = implode('', $dirArr);
+            }
+
+        }
 
         return ''
             . $this->controllerNamespace->get()
-            . $controller 
+            . $controller . $subDir
             . $this->controllerSuffix
             . '';
+
     } 
 
 
@@ -136,30 +153,6 @@ abstract class AbstractApplicationRelevant implements
 
         return ($isAction || $isCall);
     } 
-
-
-
-
-    private function isNamespaceInController()
-    {
-        $explode = self::explodeController();
-        $isCount = (count($explode) > 1);
-        $inArr   = (in_array(ucfirst($explode[0]), $explode));
-
-        return ($isCount && $inArr);
-
-    } 
-
-
-
-
-
-
-    private function explodeController()
-    {
-        return explode('\\', $this->uri->getController());
-    } 
-
 
 
 
