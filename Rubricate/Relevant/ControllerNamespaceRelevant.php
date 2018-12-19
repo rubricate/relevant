@@ -4,7 +4,7 @@
  * @package     RubricatePHP
  * @author      Estefanio NS <estefanions AT gmail DOT com>
  * @link        http://rubricate.github.io
- * @copyright   2017 
+ * @copyright   2017 - 2018
  * 
  */
 
@@ -18,7 +18,7 @@ class ControllerNamespaceRelevant implements IControllerNamespaceRelevant
 
     public function __construct($controllerNamespace)
     {
-        self::setControllerNamespace($controllerNamespace);
+        self::init($controllerNamespace);
     }
 
 
@@ -28,9 +28,10 @@ class ControllerNamespaceRelevant implements IControllerNamespaceRelevant
     } 
 
 
-    private function setControllerNamespace($controllerNamespace)
+    private function init($controllerNamespace)
     {
-        $ns = str_replace('.', '\\', $controllerNamespace);
+        $search = array('.', '-', '_');
+        $ns = str_replace($search, '\\', $controllerNamespace);
         $this->controllerNamespace = rtrim($ns, '\\') . '\\' ;
 
         return $this;
@@ -39,5 +40,4 @@ class ControllerNamespaceRelevant implements IControllerNamespaceRelevant
 
 
 }    
-
 
