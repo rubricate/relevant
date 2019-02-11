@@ -4,7 +4,7 @@
  * @package     RubricatePHP
  * @author      Estefanio NS <estefanions AT gmail DOT com>
  * @link        http://rubricate.github.io
- * @copyright   2018 
+ * @copyright   2018 - 2019
  * 
  */
 
@@ -25,6 +25,7 @@ abstract class AbstractApplicationRelevant implements
     private $actionSuffix;
     private $namespaceInController       = array();
     private $enableDirSubSufixController = false;
+    private $nameControllerError         = null;
 
 
 
@@ -36,8 +37,8 @@ abstract class AbstractApplicationRelevant implements
     }
 
 
-    protected abstract function run();
 
+    protected abstract function run();
 
 
 
@@ -50,7 +51,6 @@ abstract class AbstractApplicationRelevant implements
 
 
 
-
     public function setActionSuffix($actionSuffix)
     {
         $this->actionSuffix = $actionSuffix;
@@ -58,6 +58,14 @@ abstract class AbstractApplicationRelevant implements
         return $this;
     } 
 
+
+
+    public function setControllerError404($error404)
+    {
+       $this->nameControllerError = $error404;
+
+       return $this;
+    }
 
 
 
@@ -84,8 +92,7 @@ abstract class AbstractApplicationRelevant implements
         $this->namespaceInController[] = $name;
 
         return $this;
-    } 
-
+    }
 
 
 
@@ -114,8 +121,7 @@ abstract class AbstractApplicationRelevant implements
             . $this->controllerSuffix
             . '';
 
-    } 
-
+    }
 
 
 
@@ -126,16 +132,14 @@ abstract class AbstractApplicationRelevant implements
         $action  = (!$is) ? $name: $default;
 
         return $action . $this->actionSuffix;
-    } 
-
+    }
 
 
 
     protected function getParam()
     {
         return $this->uri->getParamArr();
-    } 
-
+    }
 
 
 
@@ -152,7 +156,42 @@ abstract class AbstractApplicationRelevant implements
         }
 
         return ($isAction || $isCall);
-    } 
+    }
+
+
+
+    protected function getNameControllerError()
+    {
+        $error404        = null;
+        $subDir          = '/';
+
+        if (!is_null($this->nameControllerError) ) {
+
+            $error404       = $this->nameControllerError;
+            $nameController = null;
+
+            if(is_array($error404)) {
+
+                $c = self::getController();
+
+                $e = explode('\\', $c);
+
+                if(count($e) > 3){
+                    $subDir = $e[2];
+                }
+
+                if(in_array($subDir, array_keys($error404))){
+
+                    $nameController = $error404[$subDir];
+                }
+
+            }
+
+            $error404 = $nameController;
+        }
+
+        return $error404;
+    }
 
 
 

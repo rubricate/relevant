@@ -4,7 +4,7 @@
  * @package     RubricatePHP
  * @author      Estefanio NS <estefanions AT gmail DOT com>
  * @link        http://rubricate.github.io
- * @copyright   2010 - 2018 
+ * @copyright   2010 - 2019
  * 
  */
 
@@ -22,8 +22,6 @@ class ApplicationRelevant extends AbstractApplicationRelevant
     ) { 
         parent::__construct($c, $u);
     }
-
-
 
 
 
@@ -46,10 +44,13 @@ class ApplicationRelevant extends AbstractApplicationRelevant
 
 
 
-
     private function controllerError404() 
     {
-        $controller = parent::getController('Error404');
+
+        $controller = parent::getController(
+            parent::getNameControllerError()
+        );
+
 
         if (!class_exists($controller)) {
             exit('Page Not found');
@@ -61,7 +62,6 @@ class ApplicationRelevant extends AbstractApplicationRelevant
         exit();
 
     }
-
 
 
 
