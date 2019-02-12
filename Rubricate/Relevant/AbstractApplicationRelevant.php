@@ -162,8 +162,9 @@ abstract class AbstractApplicationRelevant implements
 
     protected function getNameControllerError()
     {
-        $error404        = null;
-        $subDir          = '/';
+        $error404 = null;
+        $subDir   = '/';
+        $ns       = '';
 
         if (!is_null($this->nameControllerError) ) {
 
@@ -172,12 +173,13 @@ abstract class AbstractApplicationRelevant implements
 
             if(is_array($error404)) {
 
-                $c = self::getController();
-
+                $n = $this->controllerNamespace->get();
+                $c = str_replace($n, '', self::getController() );
                 $e = explode('\\', $c);
+                $i = (count($e) > 1);
 
-                if(count($e) > 3){
-                    $subDir = $e[2];
+                if($i){
+                    $subDir = $e[0];
                 }
 
                 if(in_array($subDir, array_keys($error404))){
@@ -187,7 +189,8 @@ abstract class AbstractApplicationRelevant implements
 
             }
 
-            $error404 = $nameController;
+            $ns       = ($i)? $subDir . '\\': '';
+            $error404 = $ns . $nameController;
         }
 
         return $error404;
