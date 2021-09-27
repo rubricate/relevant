@@ -4,14 +4,14 @@
 
     "authors": [
         {
-            "name": "Estefanio NS",
+            "name": "Estefanio N Santos",
             "email": "estefanions@gmail.com"
         }
     ],
 
     "require": {
         "php": ">=5.3.0",
-        "rubricate/uri": "^0.5"
+        "rubricate/uri": "^0.7"
     },
     "autoload":{
         "psr-4": {
