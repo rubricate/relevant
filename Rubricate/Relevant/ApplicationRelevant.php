@@ -1,29 +1,16 @@
 <?php
 
-/*
- * @package     RubricatePHP
- * @author      Estefanio NS <estefanions AT gmail DOT com>
- * @link        http://rubricate.github.io
- * @copyright   2010 - 2019
- * 
- */
-
 namespace Rubricate\Relevant;
 
 use Rubricate\Uri\IUri;
 
-
 class ApplicationRelevant extends AbstractApplicationRelevant
 {
-
-
     public function __construct(
         IControllerNamespaceRelevant $c, IUri $u
     ) { 
         parent::__construct($c, $u);
     }
-
-
 
     public function run() 
     {
@@ -42,15 +29,11 @@ class ApplicationRelevant extends AbstractApplicationRelevant
         call_user_func_array($initControllerAction, $param);
     }
 
-
-
     private function controllerError404() 
     {
-
         $controller = parent::getController(
             parent::getNameControllerError()
         );
-
 
         if (!class_exists($controller)) {
             exit('Page Not found');
@@ -60,10 +43,7 @@ class ApplicationRelevant extends AbstractApplicationRelevant
         $error404->{parent::getAction('index')}();
 
         exit();
-
     }
-
-
 
 }
 

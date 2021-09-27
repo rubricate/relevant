@@ -1,13 +1,5 @@
 <?php
 
-/*
- * @package     RubricatePHP
- * @author      Estefanio NS <estefanions AT gmail DOT com>
- * @link        http://rubricate.github.io
- * @copyright   2018 - 2019
- * 
- */
-
 namespace Rubricate\Relevant;
 
 use Rubricate\Relevant\IControllerNamespaceRelevant;
@@ -23,11 +15,9 @@ abstract class AbstractApplicationRelevant implements
     private $uri;
     private $controllerSuffix;
     private $actionSuffix;
-    private $namespaceInController       = array();
+    private $namespaceInController       = [];
     private $enableDirSubSufixController = false;
     private $nameControllerError         = null;
-
-
 
     public function __construct(
         IControllerNamespaceRelevant $c, IUri $u
@@ -36,11 +26,7 @@ abstract class AbstractApplicationRelevant implements
         $this->uri                 = $u;
     }
 
-
-
     protected abstract function run();
-
-
 
     public function setControllerSuffix($controllerSuffix)
     {
@@ -49,16 +35,12 @@ abstract class AbstractApplicationRelevant implements
         return $this;
     } 
 
-
-
     public function setActionSuffix($actionSuffix)
     {
         $this->actionSuffix = $actionSuffix;
 
         return $this;
     } 
-
-
 
     public function setControllerError404($error404)
     {
@@ -67,16 +49,12 @@ abstract class AbstractApplicationRelevant implements
        return $this;
     }
 
-
-
     public function enableDirSubSufixController()
     {
         $this->enableDirSubSufixController = true;
 
         return $this;
     } 
-
-
 
     public function addNamespaceInController($name)
     {
@@ -93,8 +71,6 @@ abstract class AbstractApplicationRelevant implements
 
         return $this;
     }
-
-
 
     protected function getController($name = null)
     {
@@ -123,8 +99,6 @@ abstract class AbstractApplicationRelevant implements
 
     }
 
-
-
     protected function getAction($name = null)
     {
         $is      = (is_null($name));
@@ -134,14 +108,10 @@ abstract class AbstractApplicationRelevant implements
         return $action . $this->actionSuffix;
     }
 
-
-
     protected function getParam()
     {
         return $this->uri->getParamArr();
     }
-
-
 
     protected function isHttpCode200()
     {
@@ -157,8 +127,6 @@ abstract class AbstractApplicationRelevant implements
 
         return ($isAction || $isCall);
     }
-
-
 
     protected function getNameControllerError()
     {
@@ -195,8 +163,6 @@ abstract class AbstractApplicationRelevant implements
 
         return $error404;
     }
-
-
 
 }    
 
