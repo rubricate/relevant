@@ -158,7 +158,7 @@ abstract class AbstractApplicationRelevant implements
 
             }
 
-            $ns       = ($i)? $subDir . '\\': $error404;
+            $ns       = ($i)? $subDir . '\\': '';
             $error404 = $ns . $nameController;
         }
 
