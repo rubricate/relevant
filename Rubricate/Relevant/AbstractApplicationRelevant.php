@@ -42,7 +42,7 @@ abstract class AbstractApplicationRelevant implements
         return $this;
     } 
 
-    public function setControllerError404($error404)
+    public function setControllerNotFound($error404)
     {
        $this->nameControllerError = $error404;
 
@@ -130,6 +130,7 @@ abstract class AbstractApplicationRelevant implements
 
     protected function getNameControllerError()
     {
+        $i = 0;
         $error404 = null;
         $subDir   = '/';
         $ns       = '';
@@ -157,7 +158,7 @@ abstract class AbstractApplicationRelevant implements
 
             }
 
-            $ns       = ($i)? $subDir . '\\': '';
+            $ns       = ($i)? $subDir . '\\': $error404;
             $error404 = $ns . $nameController;
         }
 
