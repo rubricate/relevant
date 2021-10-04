@@ -2,13 +2,19 @@
 
 namespace Rubricate\Relevant;
 
-use Rubricate\Uri\IUri;
+use Rubricate\Uri;
+use Rubricate\Relevant\
+    ControllerNamespaceRelevant as ControllerNs;
 
 class ApplicationRelevant extends AbstractApplicationRelevant
 {
     public function __construct(
-        IControllerNamespaceRelevant $c, IUri $u
+        $controllerNamespace, $routes = []
     ) { 
+
+        $c = new ControllerNs($controllerNamespace);
+        $u = new Uri\CoreUri($routes);
+
         parent::__construct($c, $u);
     }
 
@@ -17,7 +23,6 @@ class ApplicationRelevant extends AbstractApplicationRelevant
         $controller   = parent::getController();
         $action       = parent::getAction();
         $param        = parent::getParam();
-
 
         if (!parent::isHttpCode200()) {
             self::controllerError404();
