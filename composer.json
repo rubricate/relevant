@@ -1,17 +1,19 @@
 {
     "name": "rubricate/relevant",
     "license": "MIT",
-
     "authors": [
         {
             "name": "Estefanio N Santos",
             "email": "estefanions@gmail.com"
         }
     ],
-
     "require": {
-        "php": ">=5.3.0",
+        "php": "^7.1",
         "rubricate/uri": "^0.7"
+    },
+    "support": {
+        "docs"   : "https://rubricate.github.io/components/relevant",
+        "source" : "https://github.com/rubricate/relevant"
     },
     "autoload":{
         "psr-4": {
@@ -19,3 +21,4 @@
         }
     }
 }
+
