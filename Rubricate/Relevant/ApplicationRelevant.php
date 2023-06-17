@@ -3,8 +3,7 @@
 namespace Rubricate\Relevant;
 
 use Rubricate\Uri;
-use Rubricate\Relevant\
-    ControllerNamespaceRelevant as ControllerNs;
+use Rubricate\Relevant\ControllerNamespaceRelevant as ControllerNs;
 
 class ApplicationRelevant extends AbstractApplicationRelevant
 {
