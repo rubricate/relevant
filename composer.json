@@ -8,7 +8,6 @@
         }
     ],
     "require": {
-        "php": "^7.1",
         "rubricate/uri": "^0.7"
     },
     "support": {
