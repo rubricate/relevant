@@ -76,8 +76,7 @@ abstract class AbstractApplicationRelevant implements
 
     protected function getController($name = null): string
     {
-        $controller = (!is_null($name))
-            ? $name: $this->uri->getNamespaceAndController();
+        $controller = $name?? $this->uri->getNamespaceAndController();
 
         $subDir = '';
 
@@ -103,9 +102,8 @@ abstract class AbstractApplicationRelevant implements
 
     protected function getAction($name = null): string
     {
-        $is      = (is_null($name));
         $default = $this->uri->getAction();
-        $action  = (!$is) ? $name: $default;
+        $action  = $name?? $default;
 
         return $action . $this->actionSuffix;
     }
