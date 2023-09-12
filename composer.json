@@ -8,8 +8,8 @@
         }
     ],
     "require": {
-        "php": ">=5.4",
-        "rubricate/uri": "^1.0"
+        "php": ">=7.2",
+        "rubricate/uri": "^2.2"
     },
     "support": {
         "docs"   : "https://rubricate.github.io/components/relevant",
