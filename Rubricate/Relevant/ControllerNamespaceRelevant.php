@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Rubricate\Relevant;
 
 class ControllerNamespaceRelevant implements IControllerNamespaceRelevant
@@ -11,12 +13,12 @@ class ControllerNamespaceRelevant implements IControllerNamespaceRelevant
         self::init($controllerNamespace);
     }
 
-    public function get()
+    public function get(): string
     {
         return $this->controllerNamespace;
     } 
 
-    private function init($controllerNamespace)
+    private function init($controllerNamespace): object
     {
         $search = array('.', '-', '_');
         $ns = str_replace($search, '\\', $controllerNamespace);

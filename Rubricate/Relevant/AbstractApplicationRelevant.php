@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Rubricate\Relevant;
 
 use Rubricate\Relevant\IControllerNamespaceRelevant;
@@ -28,35 +30,35 @@ abstract class AbstractApplicationRelevant implements
 
     protected abstract function run();
 
-    public function setControllerSuffix($controllerSuffix)
+    public function setControllerSuffix($controllerSuffix): object
     {
         $this->controllerSuffix = $controllerSuffix;
 
         return $this;
     } 
 
-    public function setActionSuffix($actionSuffix)
+    public function setActionSuffix($actionSuffix): object
     {
         $this->actionSuffix = $actionSuffix;
 
         return $this;
     } 
 
-    public function setControllerNotFound($error404)
+    public function setControllerNotFound($error404): object
     {
        $this->nameControllerError = $error404;
 
        return $this;
     }
 
-    public function enableDirSubSufixController()
+    public function enableDirSubSufixController(): object
     {
         $this->enableDirSubSufixController = true;
 
         return $this;
     } 
 
-    public function addNamespaceInController($name)
+    public function addNamespaceInController($name): object
     {
         if(is_array($name)) {
 
@@ -72,7 +74,7 @@ abstract class AbstractApplicationRelevant implements
         return $this;
     }
 
-    protected function getController($name = null)
+    protected function getController($name = null): string
     {
         $controller = (!is_null($name))
             ? $name: $this->uri->getNamespaceAndController();
@@ -99,7 +101,7 @@ abstract class AbstractApplicationRelevant implements
 
     }
 
-    protected function getAction($name = null)
+    protected function getAction($name = null): string
     {
         $is      = (is_null($name));
         $default = $this->uri->getAction();
@@ -108,7 +110,7 @@ abstract class AbstractApplicationRelevant implements
         return $action . $this->actionSuffix;
     }
 
-    protected function getParam()
+    protected function getParam(): array
     {
         return $this->uri->getParamArr();
     }
@@ -128,7 +130,7 @@ abstract class AbstractApplicationRelevant implements
         return ($isAction || $isCall);
     }
 
-    protected function getNameControllerError()
+    protected function getNameControllerError(): string
     {
         $i = 0;
         $error404 = null;

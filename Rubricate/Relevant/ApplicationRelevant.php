@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Rubricate\Relevant;
 
 use Rubricate\Uri;
@@ -33,7 +35,7 @@ class ApplicationRelevant extends AbstractApplicationRelevant
         call_user_func_array($initControllerAction, $param);
     }
 
-    private function controllerError404() 
+    private function controllerError404(): void
     {
         $controller = parent::getController(
             parent::getNameControllerError()
