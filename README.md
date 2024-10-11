@@ -5,6 +5,6 @@ $ composer require rubricate/relevant
 ```
 
 ## Structure suggestion
-example: [rubricate/startkick](https://github.com/rubricate/startkick)
+- Example: [rubricate/kickstart](https://github.com/rubricate/kickstart)
 
 - Documentation is at https://rubricate.github.io/components/relevant
