@@ -4,6 +4,6 @@ namespace Rubricate\Relevant;
 
 interface IControllerNamespaceRelevant
 {
-    public function get();
+    public function get(): string;
 }
 

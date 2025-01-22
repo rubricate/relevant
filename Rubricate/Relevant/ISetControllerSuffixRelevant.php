@@ -4,6 +4,6 @@ namespace Rubricate\Relevant;
 
 interface ISetControllerSuffixRelevant
 {
-    public function setControllerSuffix($suffix);
+    public function setControllerSuffix(string $suffix): static;
 }
 

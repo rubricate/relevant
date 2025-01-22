@@ -13,70 +13,54 @@ abstract class AbstractApplicationRelevant implements
     ISetActionSuffixRelevant,
     IAddNamespaceInControllerRelevant
 {
-    private $controllerNamespace;
-    private $uri;
-    private $controllerSuffix;
-    private $actionSuffix;
-    private $namespaceInController       = [];
-    private $enableDirSubSufixController = false;
-    private $nameControllerError         = null;
+    private array $namespaceInController      = [];
+    private bool $enableDirSubSufixController = false;
+    private ?string $nameControllerError      = null;
 
     public function __construct(
-        IControllerNamespaceRelevant $c, IUri $u
-    ) { 
-        $this->controllerNamespace = $c;
-        $this->uri                 = $u;
-    }
+        private IControllerNamespaceRelevant $controllerNamespace,
+        private IUri $uri
+    ) { }
 
-    protected abstract function run();
+    protected abstract function run(): void;
 
-    public function setControllerSuffix($controllerSuffix): object
+    public function setControllerSuffix(string $controllerSuffix): static
     {
         $this->controllerSuffix = $controllerSuffix;
-
         return $this;
     } 
 
-    public function setActionSuffix($actionSuffix): object
+    public function setActionSuffix($actionSuffix): static
     {
         $this->actionSuffix = $actionSuffix;
-
         return $this;
     } 
 
-    public function setControllerNotFound($error404): object
+    public function setControllerNotFound(array|string $error404): static
     {
-       $this->nameControllerError = $error404;
-
+        $this->nameControllerError = (is_array($error404))?
+            json_encode($error404): $error404;
        return $this;
     }
 
-    public function enableDirSubSufixController(): object
+    public function enableDirSubSufixController(): static
     {
         $this->enableDirSubSufixController = true;
-
         return $this;
     } 
 
-    public function addNamespaceInController($name): object
+    public function addNamespaceInController(array $name): static
     {
-        if(is_array($name)) {
-
-            foreach ($name as $value){
+            foreach ((array) $name as $value){
                 self::addNamespaceInController($value);
             }
-
             return $this;
-        }
 
-        $this->namespaceInController[] = $name;
-
-        return $this;
     }
 
     protected function getController($name = null): string
     {
-        $controller = $name?? $this->uri->getNamespaceAndController();
+        $controller = $name ?? $this->uri->getNamespaceAndController();
 
         $subDir = '';
 
@@ -100,11 +84,9 @@ abstract class AbstractApplicationRelevant implements
 
     }
 
-    protected function getAction($name = null): string
+    protected function getAction(?string $name = null): string
     {
-        $default = $this->uri->getAction();
-        $action  = $name?? $default;
-
+        $action = $name ?? $this->uri->getAction();
         return $action . $this->actionSuffix;
     }
 
@@ -113,56 +95,39 @@ abstract class AbstractApplicationRelevant implements
         return $this->uri->getParamArr();
     }
 
-    protected function isHttpCode200()
+    protected function isHttpCode200(): bool
     {
         $c = self::getController();
         $a = self::getAction();
 
-        $isAction = method_exists($c, $a);
-        $isCall   = method_exists($c, '__call');
-
-        if( !class_exists( self::getController() ) ) {
-            return false;
-        }
-
-        return ($isAction || $isCall);
+        return
+            class_exists($c) && (method_exists($c, $a) ||
+            method_exists($c, '__call'));
     }
 
     protected function getNameControllerError(): string
     {
-        $i = 0;
-        $error404 = null;
-        $subDir   = '/';
-        $ns       = '';
-
-        if (!is_null($this->nameControllerError) ) {
-
-            $error404       = $this->nameControllerError;
-            $nameController = null;
-
-            if(is_array($error404)) {
-
-                $n = $this->controllerNamespace->get();
-                $c = str_replace($n, '', self::getController() );
-                $e = explode('\\', $c);
-                $i = (count($e) > 1);
-
-                if($i){
-                    $subDir = $e[0];
-                }
-
-                if(in_array($subDir, array_keys($error404))){
-
-                    $nameController = $error404[$subDir];
-                }
-
-            }
-
-            $ns       = ($i)? $subDir . '\\': '';
-            $error404 = $ns . $nameController;
+        if (is_null($this->nameControllerError)) {
+            return '';
         }
 
-        return $error404;
+        if (!is_array($this->nameControllerError)) {
+            return $this->nameControllerError;
+        }
+
+        $controller = str_replace(
+            $this->controllerNamespace->get(), '',
+            $this->getController()
+        );
+
+        $segments = explode('\\', $controller);
+
+        if (count($segments) > 1) {
+            $subDir = $segments[0];
+            return $this->nameControllerError[$subDir] ?? '';
+        }
+
+        return '';
     }
 
 }    

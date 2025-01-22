@@ -4,6 +4,6 @@ namespace Rubricate\Relevant;
 
 interface IAddNamespaceInControllerRelevant
 {
-    public function addNamespaceInController($name);
+    public function addNamespaceInController(array $name): static;
 }
 

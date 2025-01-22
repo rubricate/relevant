@@ -4,6 +4,6 @@ namespace Rubricate\Relevant;
 
 interface ISetActionSuffixRelevant
 {
-    public function setActionSuffix($suffix);
+    public function setActionSuffix(string $suffix): static;
 }
 

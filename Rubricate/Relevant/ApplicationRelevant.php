@@ -10,7 +10,7 @@ use Rubricate\Relevant\ControllerNamespaceRelevant as ControllerNs;
 class ApplicationRelevant extends AbstractApplicationRelevant
 {
     public function __construct(
-        $controllerNamespace, $routes = []
+        string $controllerNamespace, array $routes = []
     ) { 
 
         $c = new ControllerNs($controllerNamespace);
@@ -19,7 +19,7 @@ class ApplicationRelevant extends AbstractApplicationRelevant
         parent::__construct($c, $u);
     }
 
-    public function run() 
+    public function run(): void
     {
         $controller   = parent::getController();
         $action       = parent::getAction();
