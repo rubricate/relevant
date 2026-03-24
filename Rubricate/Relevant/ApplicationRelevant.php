@@ -47,6 +47,13 @@ class ApplicationRelevant extends AbstractApplicationRelevant
                     $this->executeMiddlewares($middlewares);
                 }
             }
+
+            $controllerMiddlewares = $this->middlewareConfig['controllers'][$controller] ?? [];
+
+            if (!empty($controllerMiddlewares)) {
+                $this->executeMiddlewares($controllerMiddlewares);
+            }
+
         }
 
         if (!parent::isHttpCode200()) {
