@@ -4,25 +4,23 @@ declare(strict_types=1);
 
 namespace Rubricate\Relevant;
 
-use Rubricate\Uri;
+use Exception;
+use Rubricate\Uri\CoreUri;
 use Rubricate\Relevant\ControllerNamespaceRelevant as ControllerNs;
-use Rubricate\Relevant\IMiddleware;
 
 class ApplicationRelevant extends AbstractApplicationRelevant
 {
     private array $middlewareConfig = [];
 
-    public function __construct(
-        string $controllerNamespace, array $routes = []
-    ) { 
-
+    public function __construct(string $controllerNamespace, array $routes = [])
+    {
         $c = new ControllerNs($controllerNamespace);
-        $u = new Uri\CoreUri($routes);
+        $u = new CoreUri($routes);
 
         parent::__construct($c, $u);
     }
 
-    public function setMiddlewareConfig(array $config): self
+    public function setMiddlewareConfig(array $config): static
     {
         $this->middlewareConfig = $config;
         return $this;
@@ -30,13 +28,14 @@ class ApplicationRelevant extends AbstractApplicationRelevant
 
     public function run(): void
     {
-        $controller   = parent::getController();
-        $action       = parent::getAction();
-        $param        = parent::getParam();
+        $controller = $this->getController();
+        $action     = $this->getAction();
+        $param      = $this->getParam();
 
         $isExcept = in_array(
             $controller,
-            $this->middlewareConfig['except'] ?? []
+            $this->middlewareConfig['except'] ?? [],
+            true
         );
 
         $this->executeMiddlewares($this->middlewareConfig['global'] ?? []);
@@ -53,11 +52,10 @@ class ApplicationRelevant extends AbstractApplicationRelevant
             if (!empty($controllerMiddlewares)) {
                 $this->executeMiddlewares($controllerMiddlewares);
             }
-
         }
 
-        if (!parent::isHttpCode200()) {
-            self::controllerError404();
+        if (!$this->isHttpCode200()) {
+            $this->controllerError404();
         }
 
         $initController       = new $controller();
@@ -69,23 +67,18 @@ class ApplicationRelevant extends AbstractApplicationRelevant
     private function executeMiddlewares(array $middlewares): void
     {
         foreach ($middlewares as $middlewareClass) {
-
             if (is_subclass_of($middlewareClass, IMiddleware::class)) {
                 $middlewareClass::handle();
             } else {
-                throw new \Exception(''
-                    . "The class {$middlewareClass} "
-                    . 'must implement the IMiddleware interface'
-                );
+                throw new Exception("The class {$middlewareClass} must implement the IMiddleware interface");
             }
         }
     }
 
-
     private function controllerError404(): void
     {
-        $controller = parent::getController(
-            parent::getNameControllerError()
+        $controller = $this->getController(
+            $this->getNameControllerError()
         );
 
         if (!class_exists($controller)) {
@@ -93,10 +86,9 @@ class ApplicationRelevant extends AbstractApplicationRelevant
         }
 
         $error404 = new $controller();
-        $error404->{parent::getAction('index')}();
+        $error404->{$this->getAction('index')}();
 
         exit();
     }
-
 }
 
