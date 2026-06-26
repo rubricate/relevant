@@ -6,26 +6,19 @@ namespace Rubricate\Relevant;
 
 class ControllerNamespaceRelevant implements IControllerNamespaceRelevant
 {
-    private $controllerNamespace;
+    private readonly string $controllerNamespace;
 
-    public function __construct($controllerNamespace)
+    public function __construct(string $controllerNamespace)
     {
-        self::init($controllerNamespace);
+        $search = ['.', '-', '_'];
+        $ns     = str_replace($search, '\\', $controllerNamespace);
+        
+        $this->controllerNamespace = rtrim($ns, '\\') . '\\';
     }
 
     public function get(): string
     {
         return $this->controllerNamespace;
     } 
-
-    private function init($controllerNamespace): object
-    {
-        $search = array('.', '-', '_');
-        $ns = str_replace($search, '\\', $controllerNamespace);
-        $this->controllerNamespace = rtrim($ns, '\\') . '\\' ;
-
-        return $this;
-    } 
-
-}    
+}
 
