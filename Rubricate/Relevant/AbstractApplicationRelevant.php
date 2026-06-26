@@ -8,18 +8,19 @@ use Rubricate\Relevant\IControllerNamespaceRelevant;
 use Rubricate\Uri\IUri;
 
 abstract class AbstractApplicationRelevant implements 
-
     ISetControllerSuffixRelevant,
     ISetActionSuffixRelevant,
     IAddNamespaceInControllerRelevant
 {
-    private array $namespaceInController      = [];
+    private array $namespaceInController = [];
     private bool $enableDirSubSufixController = false;
-    private ?string $nameControllerError      = null;
+    private string|array|null $nameControllerError = null;
+    private string $controllerSuffix = '';
+    private string $actionSuffix = '';
 
     public function __construct(
-        private IControllerNamespaceRelevant $controllerNamespace,
-        private IUri $uri
+        private readonly IControllerNamespaceRelevant $controllerNamespace,
+        private readonly IUri $uri
     ) { }
 
     protected abstract function run(): void;
@@ -30,7 +31,7 @@ abstract class AbstractApplicationRelevant implements
         return $this;
     } 
 
-    public function setActionSuffix($actionSuffix): static
+    public function setActionSuffix(string $actionSuffix): static
     {
         $this->actionSuffix = $actionSuffix;
         return $this;
@@ -38,9 +39,8 @@ abstract class AbstractApplicationRelevant implements
 
     public function setControllerNotFound(array|string $error404): static
     {
-        $this->nameControllerError = (is_array($error404))?
-            json_encode($error404): $error404;
-       return $this;
+        $this->nameControllerError = $error404;
+        return $this;
     }
 
     public function enableDirSubSufixController(): static
@@ -51,37 +51,30 @@ abstract class AbstractApplicationRelevant implements
 
     public function addNamespaceInController(array $name): static
     {
-            foreach ((array) $name as $value){
-                self::addNamespaceInController($value);
-            }
-            return $this;
-
+        foreach ($name as $value) {
+            $this->namespaceInController[] = (string) $value;
+        }
+        return $this;
     }
 
-    protected function getController($name = null): string
+    protected function getController(?string $name = null): string
     {
         $controller = $name ?? $this->uri->getNamespaceAndController();
-
         $subDir = '';
 
-        if($this->enableDirSubSufixController){
-
+        if ($this->enableDirSubSufixController) {
             $dirArr = explode('\\', $controller);
 
-            if(count($dirArr) > 1){
-
+            if (count($dirArr) > 1) {
                 array_pop($dirArr);
                 $subDir = implode('', $dirArr);
             }
-
         }
 
-        return ''
-            . $this->controllerNamespace->get()
-            . $controller . $subDir
-            . $this->controllerSuffix
-            . '';
-
+        return $this->controllerNamespace->get()
+            . $controller
+            . $subDir
+            . $this->controllerSuffix;
     }
 
     protected function getAction(?string $name = null): string
@@ -97,12 +90,10 @@ abstract class AbstractApplicationRelevant implements
 
     protected function isHttpCode200(): bool
     {
-        $c = self::getController();
-        $a = self::getAction();
+        $c = $this->getController();
+        $a = $this->getAction();
 
-        return
-            class_exists($c) && (method_exists($c, $a) ||
-            method_exists($c, '__call'));
+        return class_exists($c) && (method_exists($c, $a) || method_exists($c, '__call'));
     }
 
     protected function getNameControllerError(): string
@@ -116,7 +107,8 @@ abstract class AbstractApplicationRelevant implements
         }
 
         $controller = str_replace(
-            $this->controllerNamespace->get(), '',
+            $this->controllerNamespace->get(),
+            '',
             $this->getController()
         );
 
@@ -129,6 +121,5 @@ abstract class AbstractApplicationRelevant implements
 
         return '';
     }
-
-}    
+}
 
