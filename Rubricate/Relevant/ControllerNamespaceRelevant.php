@@ -4,21 +4,10 @@ declare(strict_types=1);
 
 namespace Rubricate\Relevant;
 
-class ControllerNamespaceRelevant implements IControllerNamespaceRelevant
+/**
+ * @deprecated since v4.1.0, use TargetNamespaceRelevant instead. Will be removed in v5.0.0.
+ */
+class ControllerNamespaceRelevant extends TargetNamespaceRelevant
 {
-    private readonly string $controllerNamespace;
-
-    public function __construct(string $controllerNamespace)
-    {
-        $search = ['.', '-', '_'];
-        $ns     = str_replace($search, '\\', $controllerNamespace);
-        
-        $this->controllerNamespace = rtrim($ns, '\\') . '\\';
-    }
-
-    public function get(): string
-    {
-        return $this->controllerNamespace;
-    } 
 }
 
