@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Rubricate\Relevant;
 
 use Exception;
-use Rubricate\Uri\CoreUri;
+use Rubricate\Uri\SupportUri;
 use Rubricate\Relevant\ControllerNamespaceRelevant as ControllerNs;
 
 class ApplicationRelevant extends AbstractApplicationRelevant
@@ -15,7 +15,7 @@ class ApplicationRelevant extends AbstractApplicationRelevant
     public function __construct(string $controllerNamespace, array $routes = [])
     {
         $c = new ControllerNs($controllerNamespace);
-        $u = new CoreUri($routes);
+        $u = new SupportUri($routes);
 
         parent::__construct($c, $u);
     }
